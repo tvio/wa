@@ -1,7 +1,7 @@
 
 const request  = require('request');
 
-var geocodeAddress = (address) => {
+var geocodeAddress = (address, callback) => {
 
 var encodeAddr = encodeURIComponent(address);
 console.log (encodeAddr);
@@ -11,15 +11,16 @@ request({
     json: true
 },(err,res, body)=>{
     if (err){
-        cosnole.log('Unable to connect to Google servers.');
+        callback('Unable to connect to Google servers.');
     } else if (body.status === 'ZERO_RESULTS'){
-        console.log('Unable to find that address.');   
+        callback('Unable to find that address.');   
     } else if (body.status === 'OK'){
-        console.log('Načteno');
-          console.log(`Address:${body.results[0].formatted_address}`);
-          console.log(`Souřadnice šířka: ${body.results[0].geometry.location.lat}`);
-          console.log(`Souřadnice délka: ${body.results[0].geometry.location.lng}`);
-    }
+        callback(undefined,{
+            address: body.results[0].formatted_address,
+            lat: body.results[0].geometry.location.lat,
+            lng: body.results[0].geometry.location.lng
+        })
+      }
   
 });
 };
